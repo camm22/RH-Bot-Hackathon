@@ -12,7 +12,7 @@
 - Download the project
 
 ```bash
-git clone https://github.com/REACTIV-Innovation-Project/REACTIV-Application.git
+git clone https://github.com/camm22/RH-Bot-Hackathon.git
 ```
 
 - Create the virtual environment
@@ -32,12 +32,6 @@ python -m venv .venv
 ```bash
 source venv/bin/activate
 ```
-
-
----
----
----
-
 
 - Install libraries
 
