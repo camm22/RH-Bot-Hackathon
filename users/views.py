@@ -4,11 +4,23 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.conf import settings
 from .forms import CustomUserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Chat, Message
 import json
-import time
+import logging
+
+# Azure AI imports (optional)
+try:
+    from azure.ai.projects import AIProjectClient
+    from azure.identity import DefaultAzureCredential
+    from azure.ai.agents.models import ListSortOrder, MessageRole
+    AZURE_AVAILABLE = True
+except ImportError:
+    AZURE_AVAILABLE = False
+
+logger = logging.getLogger(__name__)
 
 
 def home_view(request):
@@ -148,8 +160,7 @@ def send_message(request, chat_id):
             chat.title = user_message[:30] + ('...' if len(user_message) > 30 else '')
             chat.save()
         
-        # TODO: Connect to Azure LLM service
-        # For now, simulate AI response
+        # Get AI response from Azure
         ai_response = get_ai_response(user_message)
         
         # Create AI message
@@ -180,40 +191,80 @@ def send_message(request, chat_id):
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        logger.error(f"Error in send_message: {str(e)}")
+        return JsonResponse({'error': 'Internal server error'}, status=500)
 
 
 def get_ai_response(user_message):
     """
-    TODO: Integrate with Azure LLM service
-    
-    This function should:
-    1. Connect to Azure OpenAI or Azure ML endpoint
-    2. Send the user message to the LLM
-    3. Return the AI response
-    
-    For now, return a simulated response
+    Get AI response from Azure AI agent
     """
-    # Simulate processing time
-    time.sleep(1)
+    # Check if Azure is available and configured
+    if not AZURE_AVAILABLE:
+        logger.info("Azure AI not available, using fallback response")
+        return get_fallback_response(user_message)
     
-    # Simple response based on user message
-    responses = [
-        f"I understand you're asking about: '{user_message}'. Let me help you with that.",
-        f"That's an interesting question about '{user_message}'. Here's what I think...",
-        f"Based on your message '{user_message}', I can provide some insights.",
-        f"Thank you for asking about '{user_message}'. Let me explain...",
-    ]
-    
-    # Simple keyword-based responses
+    try:
+        # Initialize Azure AI client
+        project = AIProjectClient(
+            credential=DefaultAzureCredential(),
+            endpoint=settings.AZURE_AI_ENDPOINT
+        )
+        
+        # Get the agent
+        agent = project.agents.get_agent(settings.AZURE_AI_AGENT_ID)
+        
+        # Get the thread
+        thread = project.agents.threads.get(settings.AZURE_AI_THREAD_ID)
+        
+        # Create message
+        message = project.agents.messages.create(
+            thread_id=thread.id,
+            role="user",
+            content=user_message
+        )
+        
+        # Create and process run
+        run = project.agents.runs.create_and_process(
+            thread_id=thread.id,
+            agent_id=agent.id
+        )
+        
+        if run.status == "failed":
+            logger.error(f"Azure AI run failed: {run.last_error}")
+            return get_fallback_response(user_message)
+        
+        # Get the last AI response using the specialized method
+        last_message = project.agents.messages.get_last_message_by_role(
+            thread_id=thread.id,
+            role=MessageRole.AGENT
+        )
+        
+        if last_message and hasattr(last_message, 'text_messages') and last_message.text_messages:
+            return last_message.text_messages[-1].text.value
+        
+        return get_fallback_response(user_message)
+        
+    except Exception as e:
+        logger.error(f"Error getting AI response: {str(e)}")
+        # Fallback to simulated response if Azure fails
+        return get_fallback_response(user_message)
+
+
+def get_fallback_response(user_message):
+    """
+    Fallback response when Azure AI is not available
+    """
     message_lower = user_message.lower()
-    if 'hello' in message_lower or 'hi' in message_lower:
-        return "Hello! How can I assist you today?"
-    elif 'help' in message_lower:
-        return "I'm here to help! You can ask me questions about various topics, and I'll do my best to provide useful answers."
-    elif 'about' in message_lower and 'yourself' in message_lower:
-        return "I'm RH-Bot AI, your intelligent assistant. I'm designed to help answer questions, provide information, and assist with various tasks."
+    
+    if 'horaires' in message_lower or 'heures' in message_lower:
+        return "Les horaires de travail standard sont de 9h00 à 17h30 du lundi au vendredi, avec une pause déjeuner d'une heure. Pour les cadres, il peut y avoir plus de flexibilité selon les besoins du service."
+    elif 'congés' in message_lower or 'vacances' in message_lower:
+        return "Vous avez droit à 25 jours de congés payés par an, plus les jours fériés. Les demandes doivent être faites via le système RH au moins 2 semaines à l'avance."
+    elif 'salaire' in message_lower or 'paie' in message_lower:
+        return "Pour toute question concernant votre salaire, veuillez contacter le service RH directement ou consulter votre espace employé."
+    elif 'formation' in message_lower:
+        return "L'entreprise propose diverses formations tout au long de l'année. Consultez le catalogue de formations disponible sur l'intranet ou contactez le service RH."
     else:
-        import random
-        return random.choice(responses)
+        return f"Je comprends que vous vous renseignez sur '{user_message}'. Pour des informations spécifiques RH, je vous recommande de consulter le manuel employé ou de contacter directement le service des ressources humaines."
 

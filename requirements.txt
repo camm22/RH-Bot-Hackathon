@@ -1,6 +1,8 @@
 asgiref==3.8.1
-Django==5.2.3
-django-cotton==2.1.2
+Django==5.2.1
+django-cotton
 sqlparse==0.5.3
 typing_extensions==4.14.0
 tzdata==2025.2
+azure-ai-projects
+azure-identity

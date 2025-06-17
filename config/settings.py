@@ -27,6 +27,17 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Azure AI Configuration
+AZURE_AI_ENDPOINT = "https://hr-bot-hackathon-group4-resource.services.ai.azure.com/api/projects/hr-bot-hackathon-group4"
+AZURE_AI_AGENT_ID = "asst_La9CRXiwP6eeKtSrficBdoFv"
+AZURE_AI_THREAD_ID = "thread_FufuJu2292OEZPmj7ipUv7wG"
+
+# Azure Authentication (set these environment variables)
+# AZURE_CLIENT_ID = "your-client-id"
+# AZURE_CLIENT_SECRET = "your-client-secret"  
+# AZURE_TENANT_ID = "your-tenant-id"
+# Or use AZURE_SUBSCRIPTION_ID for subscription-based auth
+
 
 # Application definition
 
