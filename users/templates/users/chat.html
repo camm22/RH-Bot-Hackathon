@@ -1,0 +1,371 @@
+{% extends "base.html" %}
+
+{% block title %}Chat - RH-Bot AI{% endblock %}
+
+{% block content %}
+<div class="h-screen flex bg-background" x-data="chatApp()">
+    <!-- Sidebar -->
+    <div class="w-64 bg-card border-r border-border flex flex-col">
+        <!-- Sidebar Header -->
+        <div class="p-4 border-b border-border">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <div class="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
+                        <i data-lucide="bot" class="h-4 w-4 text-primary-foreground"></i>
+                    </div>
+                    <span class="font-semibold text-foreground">RH-Bot AI</span>
+                </div>
+                <button 
+                    @click="createNewChat()"
+                    class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8"
+                    title="New Chat"
+                >
+                    <i data-lucide="plus" class="h-4 w-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat List -->
+        <div class="flex-1 overflow-y-auto scrollbar-hide">
+            <div class="p-2 space-y-1">
+                <template x-for="chat in chats" :key="chat.id">
+                    <div 
+                        @click="selectChat(chat.id)"
+                        :class="{ 'bg-accent': currentChatId === chat.id }"
+                        class="flex items-center justify-between p-3 rounded-lg cursor-pointer hover:bg-accent/50 transition-colors group"
+                    >
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="message-circle" class="h-4 w-4 text-muted-foreground flex-shrink-0"></i>
+                                <span class="text-sm font-medium text-foreground truncate" x-text="chat.title"></span>
+                            </div>
+                            <div class="text-xs text-muted-foreground mt-1" x-text="chat.lastMessage"></div>
+                        </div>
+                        <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button 
+                                @click.stop="deleteChat(chat.id)"
+                                class="p-1 hover:bg-destructive/10 rounded text-destructive"
+                                title="Delete chat"
+                            >
+                                <i data-lucide="trash-2" class="h-3 w-3"></i>
+                            </button>
+                        </div>
+                    </div>
+                </template>
+                
+                <!-- Empty state -->
+                <div x-show="chats.length === 0" class="text-center py-8">
+                    <i data-lucide="message-circle" class="h-8 w-8 text-muted-foreground mx-auto mb-2"></i>
+                    <p class="text-sm text-muted-foreground">No chats yet</p>
+                    <p class="text-xs text-muted-foreground">Start a new conversation</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Chat Area -->
+    <div class="flex-1 flex flex-col">
+        <!-- Header -->
+        <div class="h-16 border-b border-border bg-card/50 backdrop-blur-sm flex items-center justify-between px-6">
+            <div class="flex items-center space-x-3">
+                <div class="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center">
+                    <i data-lucide="bot" class="h-4 w-4 text-primary"></i>
+                </div>
+                <div>
+                    <h1 class="font-semibold text-foreground" x-text="getCurrentChatTitle()"></h1>
+                    <p class="text-xs text-muted-foreground">AI Assistant</p>
+                </div>
+            </div>
+
+            <!-- User Menu -->
+            <div class="relative" x-data="{ open: false }">
+                <button 
+                    @click="open = !open"
+                    @click.away="open = false"
+                    class="flex items-center space-x-2 p-2 rounded-lg hover:bg-accent transition-colors"
+                >
+                    <div class="h-8 w-8 bg-primary rounded-full flex items-center justify-center">
+                        <span class="text-xs font-medium text-primary-foreground">{{ request.user.username.0|upper }}</span>
+                    </div>
+                    <span class="text-sm font-medium text-foreground hidden sm:block">{{ request.user.username }}</span>
+                    <i data-lucide="chevron-down" class="h-4 w-4 text-muted-foreground" :class="{ 'rotate-180': open }"></i>
+                </button>
+
+                <!-- Dropdown Menu -->
+                <div 
+                    x-show="open"
+                    x-transition:enter="transition ease-out duration-100"
+                    x-transition:enter-start="transform opacity-0 scale-95"
+                    x-transition:enter-end="transform opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-75"
+                    x-transition:leave-start="transform opacity-100 scale-100"
+                    x-transition:leave-end="transform opacity-0 scale-95"
+                    class="absolute right-0 mt-2 w-48 bg-popover border border-border rounded-lg shadow-lg z-50"
+                >
+                    <div class="p-2">
+                        <div class="flex items-center space-x-2 p-2 border-b border-border mb-2">
+                            <div class="h-8 w-8 bg-primary rounded-full flex items-center justify-center">
+                                <span class="text-xs font-medium text-primary-foreground">{{ request.user.username.0|upper }}</span>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-foreground">{{ request.user.username }}</div>
+                                <div class="text-xs text-muted-foreground">{{ request.user.email|default:"No email" }}</div>
+                            </div>
+                        </div>
+                        
+                        <a href="#" class="flex items-center space-x-2 p-2 text-sm text-foreground hover:bg-accent rounded-md transition-colors">
+                            <i data-lucide="user" class="h-4 w-4"></i>
+                            <span>Profile</span>
+                        </a>
+                        
+                        <a href="#" class="flex items-center space-x-2 p-2 text-sm text-foreground hover:bg-accent rounded-md transition-colors">
+                            <i data-lucide="settings" class="h-4 w-4"></i>
+                            <span>Settings</span>
+                        </a>
+                        
+                        <a href="#" class="flex items-center space-x-2 p-2 text-sm text-foreground hover:bg-accent rounded-md transition-colors">
+                            <i data-lucide="bar-chart-3" class="h-4 w-4"></i>
+                            <span>Statistics</span>
+                        </a>
+                        
+                        <div class="border-t border-border my-2"></div>
+                        
+                        <a href="{% url 'logout' %}" class="flex items-center space-x-2 p-2 text-sm text-destructive hover:bg-destructive/10 rounded-md transition-colors">
+                            <i data-lucide="log-out" class="h-4 w-4"></i>
+                            <span>Sign Out</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="flex-1 overflow-y-auto scrollbar-hide p-4 space-y-4" x-ref="messagesContainer">
+            <template x-for="message in getCurrentMessages()" :key="message.id">
+                <div :class="{ 'justify-end': message.sender === 'user', 'justify-start': message.sender === 'ai' }" class="flex">
+                    <div :class="{ 'bg-primary text-primary-foreground': message.sender === 'user', 'bg-muted': message.sender === 'ai' }" class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
+                        <div class="flex items-start space-x-2" x-show="message.sender === 'ai'">
+                            <div class="h-6 w-6 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i data-lucide="bot" class="h-3 w-3 text-primary"></i>
+                            </div>
+                            <div class="text-sm" x-text="message.text"></div>
+                        </div>
+                        <div x-show="message.sender === 'user'" class="text-sm" x-text="message.text"></div>
+                        <div class="text-xs opacity-70 mt-1" x-text="message.timestamp"></div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Typing Indicator -->
+            <div x-show="isTyping" class="flex justify-start">
+                <div class="bg-muted max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
+                    <div class="flex items-center space-x-2">
+                        <div class="h-6 w-6 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="bot" class="h-3 w-3 text-primary"></i>
+                        </div>
+                        <div class="flex space-x-1">
+                            <div class="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></div>
+                            <div class="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                            <div class="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Welcome Message -->
+            <div x-show="getCurrentMessages().length === 0 && !isTyping" class="text-center py-12">
+                <div class="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="bot" class="h-8 w-8 text-primary"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-foreground mb-2">Welcome to RH-Bot AI</h3>
+                <p class="text-muted-foreground mb-6">I'm here to help you with any questions or tasks. How can I assist you today?</p>
+                <div class="flex flex-wrap justify-center gap-2">
+                    <button @click="sendSuggestedMessage('What can you help me with?')" class="px-3 py-1 text-xs bg-secondary text-secondary-foreground rounded-full hover:bg-secondary/80 transition-colors">
+                        What can you help me with?
+                    </button>
+                    <button @click="sendSuggestedMessage('Tell me about yourself')" class="px-3 py-1 text-xs bg-secondary text-secondary-foreground rounded-full hover:bg-secondary/80 transition-colors">
+                        Tell me about yourself
+                    </button>
+                    <button @click="sendSuggestedMessage('How do I get started?')" class="px-3 py-1 text-xs bg-secondary text-secondary-foreground rounded-full hover:bg-secondary/80 transition-colors">
+                        How do I get started?
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message Input -->
+        <div class="border-t border-border bg-card/50 backdrop-blur-sm p-4">
+            <form @submit.prevent="sendMessage()" class="flex space-x-2">
+                <div class="flex-1 relative">
+                    <input 
+                        x-model="newMessage"
+                        type="text" 
+                        placeholder="Type your message..."
+                        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-12"
+                        :disabled="isTyping"
+                    />
+                    <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">
+                        <span x-text="newMessage.length"></span>/500
+                    </div>
+                </div>
+                <button 
+                    type="submit"
+                    :disabled="!newMessage.trim() || isTyping"
+                    class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 w-10"
+                >
+                    <i data-lucide="send" class="h-4 w-4"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function chatApp() {
+    return {
+        chats: [
+            {
+                id: 1,
+                title: "Welcome Chat",
+                lastMessage: "Hello! How can I help you today?",
+                messages: []
+            }
+        ],
+        currentChatId: 1,
+        newMessage: '',
+        isTyping: false,
+        
+        init() {
+            // Load saved chats from localStorage
+            const savedChats = localStorage.getItem('rhbot_chats');
+            if (savedChats) {
+                this.chats = JSON.parse(savedChats);
+            }
+            
+            // Set current chat
+            if (this.chats.length > 0) {
+                this.currentChatId = this.chats[0].id;
+            }
+        },
+        
+        createNewChat() {
+            const newChat = {
+                id: Date.now(),
+                title: "New Chat",
+                lastMessage: "Start a conversation...",
+                messages: []
+            };
+            this.chats.unshift(newChat);
+            this.currentChatId = newChat.id;
+            this.saveChats();
+        },
+        
+        selectChat(chatId) {
+            this.currentChatId = chatId;
+        },
+        
+        deleteChat(chatId) {
+            if (this.chats.length === 1) {
+                // Don't delete the last chat, just clear it
+                const chat = this.chats.find(c => c.id === chatId);
+                if (chat) {
+                    chat.messages = [];
+                    chat.title = "New Chat";
+                    chat.lastMessage = "Start a conversation...";
+                }
+            } else {
+                this.chats = this.chats.filter(c => c.id !== chatId);
+                if (this.currentChatId === chatId) {
+                    this.currentChatId = this.chats[0]?.id || null;
+                }
+            }
+            this.saveChats();
+        },
+        
+        getCurrentChat() {
+            return this.chats.find(c => c.id === this.currentChatId);
+        },
+        
+        getCurrentMessages() {
+            const chat = this.getCurrentChat();
+            return chat ? chat.messages : [];
+        },
+        
+        getCurrentChatTitle() {
+            const chat = this.getCurrentChat();
+            return chat ? chat.title : "Chat";
+        },
+        
+        async sendMessage() {
+            if (!this.newMessage.trim() || this.isTyping) return;
+            
+            const message = this.newMessage.trim();
+            this.newMessage = '';
+            
+            // Add user message
+            this.addMessage('user', message);
+            
+            // Simulate AI response
+            this.isTyping = true;
+            
+            setTimeout(() => {
+                const responses = [
+                    "I understand your question. Let me help you with that.",
+                    "That's an interesting point. Here's what I think...",
+                    "I can definitely help you with that. Let me explain...",
+                    "Great question! Here's my response...",
+                    "I'm here to assist you. Based on what you've asked..."
+                ];
+                
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                this.addMessage('ai', randomResponse);
+                this.isTyping = false;
+                
+                // Scroll to bottom
+                this.$nextTick(() => {
+                    this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight;
+                });
+            }, 1000 + Math.random() * 2000);
+        },
+        
+        sendSuggestedMessage(message) {
+            this.newMessage = message;
+            this.sendMessage();
+        },
+        
+        addMessage(sender, text) {
+            const chat = this.getCurrentChat();
+            if (!chat) return;
+            
+            const message = {
+                id: Date.now(),
+                sender,
+                text,
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            
+            chat.messages.push(message);
+            
+            // Update chat title if it's the first message
+            if (chat.messages.length === 1 && sender === 'user') {
+                chat.title = text.length > 30 ? text.substring(0, 30) + '...' : text;
+            }
+            
+            // Update last message
+            chat.lastMessage = text.length > 50 ? text.substring(0, 50) + '...' : text;
+            
+            this.saveChats();
+            
+            // Scroll to bottom
+            this.$nextTick(() => {
+                this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight;
+            });
+        },
+        
+        saveChats() {
+            localStorage.setItem('rhbot_chats', JSON.stringify(this.chats));
+        }
+    }
+}
+</script>
+{% endblock %} 

@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from .forms import CustomUserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 
@@ -25,7 +26,7 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('dashboard')
+            return redirect('chat')
     else:
         form = AuthenticationForm()
     return render(request, 'users/login.html', {'form': form})
@@ -36,8 +37,15 @@ def logout_view(request):
     return redirect('login')
 
 
+@login_required
 def dashboard_view(request):
-    return render(request, 'users/dashboard.html', {'show_navbar': True})
+    return redirect('chat')
+
+
+@login_required
+def chat_view(request):
+    return render(request, 'users/chat.html')
+
 
 def webcam_view(request):
     return render(request, 'users/webcam.html')
