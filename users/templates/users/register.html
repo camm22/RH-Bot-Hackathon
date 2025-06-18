@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account - RH-Bot AI{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 px-4 sm:px-6 lg:px-8 py-12">
+    <div class="max-w-2xl w-full space-y-8">
+        <!-- Header -->
+        <div class="text-center">
+            <div class="mx-auto h-12 w-12 bg-primary rounded-lg flex items-center justify-center mb-4">
+                <i data-lucide="user-plus" class="h-6 w-6 text-primary-foreground"></i>
+            </div>
+            <h2 class="text-3xl font-bold tracking-tight text-foreground">Create Account</h2>
+            <p class="mt-2 text-sm text-muted-foreground">
+                Join us to start chatting with AI
+            </p>
+        </div>
+
+        <!-- Register Form -->
+        <div class="bg-card rounded-lg border border-border shadow-sm p-8">
+            <form method="post" class="space-y-6" x-data="{ loading: false }" @submit="loading = true">
+                {% csrf_token %}
+                
+                <!-- Section: Informations de base -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-foreground border-b border-border pb-2">
+                        Informations de base
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Username Field -->
+                        <div class="space-y-2">
+                            <label for="{{ form.username.id_for_label }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Username <span class="text-destructive">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="{{ form.username.id_for_label }}" 
+                                name="{{ form.username.name }}" 
+                                value="{{ form.username.value|default:'' }}"
+                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                placeholder="Choose a username"
+                                required
+                            />
+                            {% if form.username.errors %}
+                                <div class="text-sm text-destructive">
+                                    {{ form.username.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Email Field -->
+                        <div class="space-y-2">
+                            <label for="{{ form.email.id_for_label }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Email
+                            </label>
+                            <input 
+                                type="email" 
+                                id="{{ form.email.id_for_label }}" 
+                                name="{{ form.email.name }}" 
+                                value="{{ form.email.value|default:'' }}"
+                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                placeholder="Enter your email"
+                            />
+                            {% if form.email.errors %}
+                                <div class="text-sm text-destructive">
+                                    {{ form.email.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- First Name -->
+                        <div class="space-y-2">
+                            <label for="{{ form.first_name.id_for_label }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Prénom
+                            </label>
+                            <input 
+                                type="text" 
+                                id="{{ form.first_name.id_for_label }}" 
+                                name="{{ form.first_name.name }}" 
+                                value="{{ form.first_name.value|default:'' }}"
+                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                placeholder="Votre prénom"
+                            />
+                        </div>
+
+                        <!-- Last Name -->
+                        <div class="space-y-2">
+                            <label for="{{ form.last_name.id_for_label }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Nom
+                            </label>
+                            <input 
+                                type="text" 
+                                id="{{ form.last_name.id_for_label }}" 
+                                name="{{ form.last_name.name }}" 
+                                value="{{ form.last_name.value|default:'' }}"
+                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                placeholder="Votre nom"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Birth Date -->
+                        <div class="space-y-2">
+                            <label for="{{ form.birth_date.id_for_label }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Date de naissance
+                            </label>
+                            {{ form.birth_date }}
+                            {% if form.birth_date.errors %}
+                                <div class="text-sm text-destructive">
+                                    {{ form.birth_date.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Sex -->
+                        <div class="space-y-2">
+                            <label for="{{ form.sex.id_for_label }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Sexe
+                            </label>
+                            {{ form.sex }}
+                            {% if form.sex.errors %}
+                                <div class="text-sm text-destructive">
+                                    {{ form.sex.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Informations professionnelles -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-foreground border-b border-border pb-2">
+                        Informations professionnelles
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Employee ID -->
+                        <div class="space-y-2">
+                            <label for="{{ form.employee_id.id_for_label }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                ID Employé
+                            </label>
+                            {{ form.employee_id }}
+                            {% if form.employee_id.errors %}
+                                <div class="text-sm text-destructive">
+                                    {{ form.employee_id.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Department -->
+                        <div class="space-y-2">
+                            <label for="{{ form.departement.id_for_label }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Département
+                            </label>
+                            {{ form.departement }}
+                            {% if form.departement.errors %}
+                                <div class="text-sm text-destructive">
+                                    {{ form.departement.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Position -->
+                        <div class="space-y-2">
+                            <label for="{{ form.poste.id_for_label }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Poste
+                            </label>
+                            {{ form.poste }}
+                            {% if form.poste.errors %}
+                                <div class="text-sm text-destructive">
+                                    {{ form.poste.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Date embauche -->
+                        <div class="space-y-2">
+                            <label for="{{ form.date_embauche.id_for_label }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Date d'embauche
+                            </label>
+                            {{ form.date_embauche }}
+                            {% if form.date_embauche.errors %}
+                                <div class="text-sm text-destructive">
+                                    {{ form.date_embauche.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Salary -->
+                        <div class="space-y-2">
+                            <label for="{{ form.salaire.id_for_label }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Salaire annuel (€)
+                            </label>
+                            {{ form.salaire }}
+                            {% if form.salaire.errors %}
+                                <div class="text-sm text-destructive">
+                                    {{ form.salaire.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Health Insurance -->
+                        <div class="space-y-2">
+                            <label for="{{ form.regime_sante.id_for_label }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Régime de santé
+                            </label>
+                            {{ form.regime_sante }}
+                            {% if form.regime_sante.errors %}
+                                <div class="text-sm text-destructive">
+                                    {{ form.regime_sante.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Sécurité -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-foreground border-b border-border pb-2">
+                        Sécurité
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Password Field -->
+                        <div class="space-y-2">
+                            <label for="{{ form.password1.id_for_label }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Mot de passe <span class="text-destructive">*</span>
+                            </label>
+                            <input 
+                                type="password" 
+                                id="{{ form.password1.id_for_label }}" 
+                                name="{{ form.password1.name }}"
+                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                placeholder="Create a password"
+                                required
+                            />
+                            {% if form.password1.errors %}
+                                <div class="text-sm text-destructive">
+                                    {{ form.password1.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Confirm Password Field -->
+                        <div class="space-y-2">
+                            <label for="{{ form.password2.id_for_label }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Confirmer le mot de passe <span class="text-destructive">*</span>
+                            </label>
+                            <input 
+                                type="password" 
+                                id="{{ form.password2.id_for_label }}" 
+                                name="{{ form.password2.name }}"
+                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                placeholder="Confirm your password"
+                                required
+                            />
+                            {% if form.password2.errors %}
+                                <div class="text-sm text-destructive">
+                                    {{ form.password2.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Errors -->
+                {% if form.non_field_errors %}
+                    <div class="rounded-md bg-destructive/10 border border-destructive/20 p-3">
+                        <div class="flex items-center">
+                            <i data-lucide="alert-circle" class="h-4 w-4 text-destructive mr-2"></i>
+                            <div class="text-sm text-destructive">
+                                {{ form.non_field_errors.0 }}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+                    :disabled="loading"
+                >
+                    <span x-show="!loading">Create Account</span>
+                    <span x-show="loading" class="flex items-center">
+                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Creating account...
+                    </span>
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="relative my-6">
+                <div class="absolute inset-0 flex items-center">
+                    <span class="w-full border-t border-border"></span>
+                </div>
+                <div class="relative flex justify-center text-xs uppercase">
+                    <span class="bg-card px-2 text-muted-foreground">Already have an account?</span>
+                </div>
+            </div>
+
+            <!-- Login Link -->
+            <div class="text-center">
+                <a href="{% url 'login' %}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full">
+                    Sign In
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center text-xs text-muted-foreground">
+            <p>By creating an account, you agree to our Terms of Service and Privacy Policy.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

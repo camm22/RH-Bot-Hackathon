@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1>Bienvenue sur le dashboard de {{ request.user.username }}</h1>
+<p>Contenu réservé aux utilisateurs connectés.</p>
+
+<!-- Container pour Plotly -->
+<div id="plotly-div" style="width: 100%; height: 500px;"></div>
+
+<!-- Chargement de Plotly depuis CDN -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<script>
+  // Exemple de données aléatoires pour tester
+  var trace1 = {
+    x: [1, 2, 3, 4, 5],
+    y: [10, 15, 13, 17, 22],
+    mode: 'lines+markers',
+    type: 'scatter'
+  };
+
+  var data = [trace1];
+
+  var layout = {
+    title: 'Exemple de graphique Plotly interactif',
+    xaxis: { title: 'X' },
+    yaxis: { title: 'Y' }
+  };
+
+  // Rendu du graphique dans le div
+  Plotly.newPlot('plotly-div', data, layout);
+</script>
+
+{% endblock %}

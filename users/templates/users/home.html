@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}RH-Bot AI - Your AI Assistant{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <!-- Hero Section -->
+    <div class="relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+            <div class="text-center">
+                <div class="mx-auto h-20 w-20 bg-primary rounded-2xl flex items-center justify-center mb-8">
+                    <i data-lucide="bot" class="h-10 w-10 text-primary-foreground"></i>
+                </div>
+                
+                <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6">
+                    Meet Your AI
+                    <span class="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                        Assistant
+                    </span>
+                </h1>
+                
+                <p class="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
+                    Experience the future of conversation with RH-Bot AI. Get instant help, creative insights, and intelligent responses to all your questions.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="{% url 'register' %}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8">
+                        <i data-lucide="user-plus" class="h-4 w-4 mr-2"></i>
+                        Get Started Free
+                    </a>
+                    
+                    <a href="{% url 'login' %}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-11 px-8">
+                        <i data-lucide="log-in" class="h-4 w-4 mr-2"></i>
+                        Sign In
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold tracking-tight text-foreground mb-4">
+                Why Choose RH-Bot AI?
+            </h2>
+            <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Discover the features that make our AI assistant the perfect companion for your daily tasks.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="bg-card rounded-lg border border-border p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div class="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                    <i data-lucide="zap" class="h-6 w-6 text-primary"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-foreground mb-2">Lightning Fast</h3>
+                <p class="text-muted-foreground">
+                    Get instant responses to your questions with our optimized AI engine that processes information at incredible speeds.
+                </p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="bg-card rounded-lg border border-border p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div class="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                    <i data-lucide="brain" class="h-6 w-6 text-primary"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-foreground mb-2">Smart & Contextual</h3>
+                <p class="text-muted-foreground">
+                    Our AI understands context and maintains conversation flow, providing relevant and meaningful responses.
+                </p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="bg-card rounded-lg border border-border p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div class="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                    <i data-lucide="shield-check" class="h-6 w-6 text-primary"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-foreground mb-2">Secure & Private</h3>
+                <p class="text-muted-foreground">
+                    Your conversations are protected with enterprise-grade security. We prioritize your privacy above all.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="bg-card/50 backdrop-blur-sm border-t border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold tracking-tight text-foreground mb-4">
+                    Ready to Start Chatting?
+                </h2>
+                <p class="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+                    Join thousands of users who are already experiencing the power of AI-assisted conversations.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="{% url 'register' %}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8">
+                        Start Free Today
+                        <i data-lucide="arrow-right" class="h-4 w-4 ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-border bg-card/30 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-2 mb-4 md:mb-0">
+                    <div class="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
+                        <i data-lucide="bot" class="h-4 w-4 text-primary-foreground"></i>
+                    </div>
+                    <span class="font-semibold text-foreground">RH-Bot AI</span>
+                </div>
+                
+                <div class="text-sm text-muted-foreground">
+                    © 2024 RH-Bot AI. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+{% endblock %}

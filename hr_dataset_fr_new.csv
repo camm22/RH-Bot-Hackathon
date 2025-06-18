@@ -1,0 +1,108 @@
+id;nom;email;departement;Manager;poste;responsable;date_embauche;conges.droit_annuel;conges.utilises;conges.planifies;conges.restants;conges_maladie.droit;conges_maladie.utilises;conges_maladie.restants;remuneration.salaire;remuneration.eligible_prime;remuneration.date_prochaine_evaluation;avantages.regime_sante
+E001;John Smith;john.smith@company.com;IT;Oui;Chief Technology Officer ;E005;15/03/2020;25.0;12.0;3.0;10.0;10.0;2.0;8.0;85000.0;VRAI;15/04/2023;Premium
+E002;Sara Johnson;sara.johnson@company.com;Marketing;Non;Spécialiste Marketing;E007;10/07/2021;22.0;5.0;10.0;7.0;10.0;1.0;9.0;65000.0;VRAI;10/08/2023;Standard
+E003;Miguel Rodriguez;miguel.rodriguez@company.com;Finance;Oui;Directeur Financier;E010;22/05/2019;25.0;20.0;5.0;0.0;10.0;4.0;6.0;72000.0;VRAI;22/05/2023;Premium
+E004;Emma Chen;emma.chen@company.com;IT;Non;Ingénieur DevOps;E005;18/02/2021;22.0;8.0;5.0;9.0;10.0;0.0;10.0;80000.0;VRAI;01/03/2023;Premium
+E005;David Miller;david.miller@company.com;IT;Non;Ingénieur cloud;E012;10/06/2018;28.0;10.0;8.0;10.0;12.0;1.0;11.0;135000.0;VRAI;01/07/2023;ExÃ©cutif
+E006;Priya Patel;priya.patel@company.com;RH;Non;Spécialiste RH;E014;15/01/2022;20.0;2.0;5.0;13.0;10.0;2.0;8.0;62000.0;VRAI;15/01/2024;Standard
+E007;Jessica Thompson;jessica.thompson@company.com;Marketing;Oui;Directrice Marketing;E012;05/11/2019;28.0;15.0;5.0;8.0;12.0;3.0;9.0;120000.0;VRAI;05/12/2023;ExÃ©cutif
+E008;Thomas Lee;thomas.lee@company.com;IT;Non;Spécialiste Support IT;E015;21/03/2022;20.0;5.0;3.0;12.0;10.0;1.0;9.0;58000.0;VRAI;21/04/2023;Standard
+E009;Olivia Wilson;olivia.wilson@company.com;Ventes;Non;Ingénieur Commercial ;E016;10/09/2021;22.0;10.0;5.0;7.0;10.0;3.0;7.0;75000.0;VRAI;10/10/2023;Standard
+E010;Robert Chang;robert.chang@company.com;Finance;Non;Analyste Financier;E012;03/04/2018;28.0;18.0;3.0;7.0;12.0;0.0;12.0;130000.0;VRAI;03/05/2023;ExÃ©cutif
+E011;Sophia Martinez;sophia.martinez@company.com;Recherche;Oui;Chief Research Officer;E017;12/08/2020;25.0;7.0;8.0;10.0;10.0;2.0;8.0;95000.0;VRAI;12/09/2023;Premium
+E012;James Williams;james.williams@company.com;Direction;Oui;PDG;;15/01/2017;30.0;12.0;10.0;8.0;15.0;0.0;15.0;250000.0;VRAI;15/12/2023;ExÃ©cutif
+E013;Emily Johnson;emily.johnson@company.com;IT;Non;Responsable cybersécurité;E015;03/11/2020;22.0;9.0;4.0;9.0;10.0;3.0;7.0;78000.0;VRAI;03/11/2023;Premium
+E014;Rachel Kim;rachel.kim@company.com;RH;Oui;Directrice RH;E012;08/03/2019;28.0;14.0;5.0;9.0;12.0;2.0;10.0;115000.0;VRAI;08/04/2023;ExÃ©cutif
+E015;Daniel Garcia;daniel.garcia@company.com;IT;Non;Chargé de conformité IT;E012;17/09/2018;28.0;16.0;4.0;8.0;12.0;3.0;9.0;128000.0;VRAI;17/10/2023;ExÃ©cutif
+E016;Alexandra Bennett;alexandra.bennett@company.com;Ventes;Oui;Directrice commerciale;E012;22/01/2019;28.0;18.0;2.0;8.0;12.0;1.0;11.0;132000.0;VRAI;22/02/2023;ExÃ©cutif
+E017;Michael Zhang;michael.zhang@company.com;Recherche;Non;Chef de projet R&D;E012;15/07/2018;28.0;12.0;7.0;9.0;12.0;4.0;8.0;140000.0;VRAI;15/08/2023;ExÃ©cutif
+E018;Ã‰lisabeth Valette;élisabeth.valette@company.com;Direction;Non;Chief of Staff;E010;15/03/2020;28.0;20.0;3.0;10.0;12.0;4.0;6.0;78000.0;VRAI;15/08/2023;Standard
+E019;Valentine de la Robert;valentine.robert@company.com;IT;Non;Spécialiste Support IT;E012;15/07/2018;28.0;5.0;10.0;10.0;10.0;2.0;6.0;75000.0;VRAI;15/04/2023;Premium
+E020;Raymond Sauvage;raymond.sauvage@company.com;IT;Non;Ingénieur cloud;E015;17/09/2018;28.0;16.0;3.0;9.0;12.0;3.0;8.0;75000.0;VRAI;03/05/2023;Premium
+E021;Mathilde Parent;mathilde.parent@company.com;Direction;Non;Directeur Général Adjoint ;E007;10/07/2021;22.0;7.0;5.0;9.0;12.0;3.0;9.0;135000.0;VRAI;22/02/2023;Premium
+E022;Alexandre-Augustin Lemaire;alexandre-augustin.lemaire@company.com;Ventes;Non;Ingénieur Commercial ;E012;05/11/2019;22.0;7.0;5.0;12.0;10.0;1.0;12.0;75000.0;VRAI;03/11/2023;Premium
+E023;Lucas Letellier;lucas.letellier@company.com;Finance;Non;Analyste Financier;E007;10/09/2021;28.0;10.0;10.0;8.0;10.0;1.0;7.0;75000.0;VRAI;12/09/2023;Standard
+E024;Richard Barbe;richard.barbe@company.com;Finance;Non;Chef Comptable;E005;12/08/2020;25.0;18.0;5.0;8.0;12.0;1.0;11.0;65000.0;VRAI;10/10/2023;Premium
+E025;Julie Tessier;julie.tessier@company.com;Recherche;Non;Chef de projet R&D;E007;15/07/2018;28.0;5.0;5.0;13.0;12.0;2.0;8.0;250000.0;VRAI;03/11/2023;ExÃ©cutif
+E026;Franck Leblanc;franck.leblanc@company.com;Recherche;Non;Chef de projet R&D;E005;15/03/2020;28.0;18.0;5.0;9.0;10.0;4.0;12.0;72000.0;VRAI;01/03/2023;Standard
+E027;Joseph Barbier;joseph.barbier@company.com;RH;Non;Spécialiste Marketing;E010;18/02/2021;28.0;12.0;3.0;7.0;15.0;3.0;9.0;85000.0;VRAI;22/05/2023;ExÃ©cutif
+E028;Guillaume Lefèvre;guillaume.lefèvre@company.com;IT;Non;Ingénieur cloud;E015;08/03/2019;28.0;5.0;5.0;8.0;12.0;1.0;11.0;130000.0;VRAI;01/07/2023;ExÃ©cutif
+E029;Olivie Barbe;olivie.barbe@company.com;Ventes;Non;Ingénieur Commercial ;E014;03/11/2020;28.0;9.0;3.0;9.0;10.0;0.0;6.0;135000.0;VRAI;03/05/2023;Premium
+E030;Charles Descamps;charles.descamps@company.com;IT;Non;Ingénieur DevOps;E016;21/03/2022;25.0;5.0;2.0;9.0;12.0;3.0;10.0;95000.0;VRAI;05/12/2023;ExÃ©cutif
+E031;Susan Maillet;susan.maillet@company.com;Direction;Non;Directeur de la Stratégie;E010;10/09/2021;28.0;15.0;5.0;12.0;12.0;3.0;11.0;95000.0;VRAI;22/02/2023;ExÃ©cutif
+E032;Antoine Da Silva-Pichon;antoine.silva-pichon@company.com;Direction;Non;Directeur Financier;E017;15/01/2022;20.0;14.0;3.0;9.0;12.0;4.0;8.0;65000.0;VRAI;01/03/2023;Standard
+E033;Isaac Michaud;isaac.michaud@company.com;IT;Non;Ingénieur cloud;E014;21/03/2022;28.0;8.0;5.0;8.0;12.0;1.0;11.0;128000.0;VRAI;15/01/2024;Standard
+E034;Frédéric Meyer;frédéric.meyer@company.com;Recherche;Non;Post-doctorant en entreprise;E017;03/11/2020;28.0;20.0;7.0;9.0;10.0;3.0;11.0;65000.0;VRAI;03/11/2023;ExÃ©cutif
+E035;Suzanne Gallet;suzanne.gallet@company.com;Direction;Non;Directeur Financier;E017;21/03/2022;28.0;5.0;3.0;7.0;10.0;0.0;8.0;130000.0;VRAI;05/12/2023;ExÃ©cutif
+E036;Laetitia Adam;laetitia.adam@company.com;IT;Non;Data Analyst;E012;18/02/2021;22.0;18.0;3.0;7.0;12.0;1.0;9.0;62000.0;VRAI;12/09/2023;Standard
+E037;Henri Bonnet de la Faure;henri.faure@company.com;Finance;Non;Auditeur Interne;E005;15/01/2022;22.0;12.0;3.0;9.0;12.0;1.0;8.0;75000.0;VRAI;03/05/2023;Standard
+E038;Guillaume Bonneau-Lopez;guillaume.bonneau-lopez@company.com;Recherche;Non;Expert en veille scientifique et technologique;E012;10/06/2018;28.0;10.0;5.0;7.0;12.0;2.0;8.0;78000.0;VRAI;15/08/2023;ExÃ©cutif
+E039;Margot Gonzalez;margot.gonzalez@company.com;IT;Non;Spécialiste Support IT;E007;10/09/2021;22.0;15.0;3.0;8.0;10.0;3.0;7.0;62000.0;VRAI;12/09/2023;Standard
+E040;Théophile Renard;théophile.renard@company.com;IT;Non;Data Engineer;E012;03/11/2020;28.0;5.0;5.0;8.0;10.0;1.0;9.0;75000.0;VRAI;22/02/2023;Standard
+E041;Arnaude-Océane Boutin;arnaude-océane.boutin@company.com;Recherche;Non;Post-doctorant en entreprise;E012;03/11/2020;28.0;8.0;3.0;9.0;12.0;1.0;10.0;128000.0;VRAI;22/05/2023;Standard
+E042;Marc Delahaye;marc.delahaye@company.com;Ventes;Non;Ingénieur Commercial ;E012;05/11/2019;28.0;16.0;4.0;9.0;10.0;1.0;9.0;78000.0;VRAI;12/09/2023;Standard
+E044;Pauline Gallet;pauline.gallet@company.com;IT;Non;Data Engineer;E005;15/03/2020;22.0;12.0;5.0;9.0;12.0;3.0;8.0;72000.0;VRAI;15/01/2024;ExÃ©cutif
+E045;Odette du Boucher;odette.boucher@company.com;Finance;Non;Chargé de Budget;E012;05/11/2019;28.0;5.0;5.0;7.0;12.0;4.0;7.0;72000.0;VRAI;17/10/2023;ExÃ©cutif
+E046;Josette Antoine;josette.antoine@company.com;Finance;Non;Trésorier;E005;10/09/2021;25.0;5.0;3.0;10.0;10.0;3.0;8.0;132000.0;VRAI;01/07/2023;Standard
+E047;Margot Gomez;margot.gomez@company.com;Recherche;Non;Expert en veille scientifique et technologique;E010;10/09/2021;28.0;9.0;5.0;9.0;12.0;1.0;8.0;80000.0;VRAI;05/12/2023;Standard
+E048;Agathe Ollivier-Pasquier;agathe.ollivier-pasquier@company.com;Ventes;Non;Ingénieur Commercial ;E012;12/08/2020;25.0;8.0;2.0;9.0;10.0;1.0;9.0;65000.0;VRAI;21/04/2023;Standard
+E049;Bernard Muller;bernard.muller@company.com;RH;Non;Responsable formation;E007;22/05/2019;28.0;20.0;8.0;7.0;10.0;0.0;9.0;95000.0;VRAI;03/05/2023;Premium
+E050;Joseph Ledoux;joseph.ledoux@company.com;Direction;Non;Directeur des Ressources Humaines;E016;10/09/2021;22.0;20.0;5.0;7.0;10.0;2.0;9.0;65000.0;VRAI;21/04/2023;Premium
+E051;Olivie Leconte;olivie.leconte@company.com;Finance;Non;Business Analyst Finance;E012;12/08/2020;22.0;14.0;3.0;8.0;15.0;2.0;12.0;58000.0;VRAI;01/03/2023;ExÃ©cutif
+E052;Philippine du Mercier;philippine.mercier@company.com;Recherche;Non;Chef de projet R&D;E015;08/03/2019;22.0;2.0;5.0;7.0;10.0;2.0;6.0;65000.0;VRAI;08/04/2023;Standard
+E053;Stéphane Martins;stéphane.martins@company.com;Direction;Non;Directeur des Opérations;E016;22/01/2019;22.0;10.0;3.0;9.0;10.0;2.0;7.0;65000.0;VRAI;01/03/2023;Standard
+E054;Martin Gonzalez Le Texier;martin.texier@company.com;IT;Non;Ingénieur cloud;E014;12/08/2020;25.0;5.0;3.0;7.0;10.0;2.0;8.0;78000.0;VRAI;03/05/2023;ExÃ©cutif
+E055;Claude-Geneviève Bouchet;claude-geneviève.bouchet@company.com;Direction;Non;Directeur de l’Innovation;E014;05/11/2019;28.0;18.0;10.0;8.0;12.0;1.0;8.0;250000.0;VRAI;15/01/2024;ExÃ©cutif
+E056;Tristan Simon;tristan.simon@company.com;IT;Non;Ingénieur cloud;E014;05/11/2019;22.0;14.0;5.0;7.0;10.0;1.0;7.0;130000.0;VRAI;10/10/2023;Premium
+E057;Camille Collet;camille.collet@company.com;Direction;Non;Directeur de l’Audit Interne;E017;10/09/2021;28.0;5.0;3.0;10.0;12.0;4.0;7.0;135000.0;VRAI;10/10/2023;Premium
+E058;Louise Joseph-Weber;louise.joseph-weber@company.com;RH;Non;Directeur de Recherche;E017;15/01/2017;20.0;14.0;5.0;10.0;10.0;1.0;7.0;130000.0;VRAI;08/04/2023;Premium
+E059;Antoinette-Laurence Leblanc;antoinette-laurence.leblanc@company.com;Marketing;Non;Traffic Manager;E015;03/04/2018;28.0;14.0;2.0;8.0;12.0;2.0;10.0;65000.0;VRAI;22/05/2023;Premium
+E060;Nicolas Legrand;nicolas.legrand@company.com;RH;Non;Chargé de développement des compétences;E005;15/01/2022;22.0;16.0;8.0;7.0;10.0;3.0;11.0;115000.0;VRAI;15/12/2023;ExÃ©cutif
+E061;Grégoire Launay-Courtois;grégoire.launay-courtois@company.com;Ventes;Non;Technico-commercial;E010;10/07/2021;28.0;12.0;5.0;8.0;12.0;1.0;9.0;120000.0;VRAI;15/12/2023;Standard
+E062;Théodore Regnier;théodore.regnier@company.com;Ventes;Non;Technico-commercial;E016;15/03/2020;22.0;5.0;3.0;8.0;10.0;0.0;10.0;115000.0;VRAI;03/11/2023;Standard
+E063;Ã‰ric-Franck Pages;éric-franck.pages@company.com;Ventes;Non;Technico-commercial;E015;10/06/2018;25.0;7.0;3.0;9.0;10.0;3.0;12.0;128000.0;VRAI;01/03/2023;Standard
+E064;Emmanuel Mallet de la Laurent;emmanuel.laurent@company.com;Ventes;Non;Inside Sales ;E012;21/03/2022;22.0;20.0;2.0;7.0;12.0;3.0;10.0;62000.0;VRAI;22/05/2023;ExÃ©cutif
+E065;Aimée Le Guillot;aimée.guillot@company.com;IT;Non;Spécialiste IA ;E007;03/04/2018;20.0;14.0;4.0;7.0;12.0;0.0;11.0;115000.0;VRAI;05/12/2023;Premium
+E066;Geneviève Benard-Payet;geneviève.benard-payet@company.com;IT;Non;Directrice RH;E005;15/01/2017;22.0;7.0;8.0;10.0;12.0;4.0;9.0;132000.0;VRAI;22/05/2023;Premium
+E067;Zoé Vasseur-De Sousa;zoé.sousa@company.com;Ventes;Non;Inside Sales ;E005;22/05/2019;28.0;14.0;5.0;10.0;10.0;2.0;11.0;65000.0;VRAI;05/12/2023;Standard
+E068;Michel-Daniel Gilbert;michel-daniel.gilbert@company.com;Recherche;Non;Data Scientist R&D;E015;15/03/2020;28.0;9.0;8.0;12.0;10.0;1.0;8.0;140000.0;VRAI;15/08/2023;ExÃ©cutif
+E069;Renée Collin;renée.collin@company.com;Finance;Non;Responsable conformité SOX ;E014;10/06/2018;30.0;20.0;5.0;10.0;12.0;0.0;11.0;75000.0;VRAI;08/04/2023;ExÃ©cutif
+E070;Ã‰dith Gros;édith.gros@company.com;Ventes;Non;Inside Sales ;E007;12/08/2020;22.0;12.0;4.0;8.0;12.0;2.0;15.0;132000.0;VRAI;22/02/2023;Standard
+E071;Jacques Jacques de la Joly;jacques.joly@company.com;IT;Non;Spécialiste IA ;E014;10/06/2018;28.0;15.0;3.0;8.0;10.0;1.0;9.0;140000.0;VRAI;21/04/2023;ExÃ©cutif
+E072;David Leclerc;david.leclerc@company.com;Ventes;Non;Inside Sales ;E014;22/05/2019;22.0;8.0;5.0;10.0;10.0;4.0;10.0;95000.0;VRAI;08/04/2023;Standard
+E074;Alain Guillon;alain.guillon@company.com;Finance;Non;Business Analyst Finance;E014;22/01/2019;28.0;15.0;5.0;13.0;12.0;3.0;11.0;115000.0;VRAI;03/11/2023;Premium
+E076;Rémy Michaud-Navarro;rémy.michaud-navarro@company.com;Ventes;Non;Account Executive;E014;22/01/2019;22.0;14.0;2.0;7.0;12.0;4.0;8.0;140000.0;VRAI;08/04/2023;Standard
+E079;Matthieu Daniel;matthieu.daniel@company.com;Ventes;Non;Account Executive;E005;22/01/2019;22.0;18.0;3.0;7.0;10.0;3.0;9.0;72000.0;VRAI;22/05/2023;Standard
+E080;Capucine Laporte;capucine.laporte@company.com;Marketing;Non;Content Manager;E016;03/11/2020;22.0;10.0;5.0;12.0;12.0;3.0;7.0;95000.0;VRAI;08/04/2023;ExÃ©cutif
+E081;Noël Mallet;noël.mallet@company.com;IT;Non;Data Analyst;E016;10/07/2021;28.0;5.0;5.0;9.0;12.0;3.0;10.0;135000.0;VRAI;21/04/2023;ExÃ©cutif
+E082;Marthe Louis du Moreno;marthe.moreno@company.com;Finance;Non;Business Analyst Finance;E017;22/01/2019;28.0;20.0;3.0;13.0;10.0;3.0;9.0;78000.0;VRAI;15/04/2023;Premium
+E084;Alphonse Gilles;alphonse.gilles@company.com;IT;Non;Ingénieur cloud;E015;03/04/2018;28.0;18.0;5.0;9.0;12.0;2.0;9.0;130000.0;VRAI;12/09/2023;ExÃ©cutif
+E085;Luc Andre;luc.andre@company.com;RH;Non;Chargé de développement des compétences;E005;22/01/2019;20.0;18.0;4.0;8.0;12.0;1.0;11.0;250000.0;VRAI;15/12/2023;ExÃ©cutif
+E086;Thibault du Schmitt;thibault.schmitt@company.com;Recherche;Non;Data Scientist R&D;E012;05/11/2019;22.0;10.0;5.0;7.0;10.0;2.0;8.0;78000.0;VRAI;21/04/2023;Premium
+E087;Eugène-Arthur Chauveau;eugène-arthur.chauveau@company.com;Marketing;Non;Data Marketing Analyst;E012;10/09/2021;28.0;14.0;10.0;7.0;10.0;1.0;6.0;78000.0;VRAI;08/04/2023;Premium
+E088;Sophie de Joubert;sophie.joubert@company.com;Marketing;Non;Data Marketing Analyst;E012;15/01/2017;28.0;10.0;7.0;7.0;10.0;4.0;8.0;65000.0;VRAI;22/05/2023;Premium
+E089;Marthe-Agnès Diallo;marthe-agnès.diallo@company.com;Recherche;Non;Data Scientist R&D;E017;12/08/2020;22.0;20.0;5.0;9.0;12.0;3.0;9.0;62000.0;VRAI;05/12/2023;Standard
+E090;Arthur Bazin;arthur.bazin@company.com;IT;Non;Ingénieur cloud;E012;15/07/2018;28.0;18.0;4.0;8.0;10.0;3.0;9.0;95000.0;VRAI;03/05/2023;Premium
+E091;Maggie-Catherine Cordier;maggie-catherine.cordier@company.com;IT;Non;Ingénieur cloud;E007;15/01/2017;25.0;2.0;3.0;12.0;15.0;2.0;9.0;62000.0;VRAI;15/04/2023;Standard
+E092;Mathilde Regnier du Henry;mathilde.henry@company.com;Recherche;Non;Analyste algorithmique;E014;22/01/2019;28.0;9.0;3.0;10.0;12.0;4.0;8.0;65000.0;VRAI;15/04/2023;Standard
+E094;Thomas Aubert;thomas.aubert@company.com;RH;Non;Chargé de développement des compétences;E010;18/02/2021;20.0;10.0;8.0;10.0;10.0;2.0;9.0;62000.0;VRAI;15/01/2024;Standard
+E095;Denis Maréchal;denis.maréchal@company.com;Ventes;Non;Account Executive;E014;10/09/2021;28.0;12.0;8.0;8.0;10.0;3.0;9.0;128000.0;VRAI;05/12/2023;Premium
+E096;Stéphane de Seguin;stéphane.seguin@company.com;RH;Non;Responsable du développement RH;E015;15/01/2022;22.0;20.0;8.0;13.0;12.0;3.0;11.0;135000.0;VRAI;08/04/2023;Premium
+E097;Odette Carre-Perret;odette.carre-perret@company.com;Finance;Non;Analyste Financier;E012;21/03/2022;28.0;2.0;10.0;12.0;10.0;2.0;8.0;140000.0;VRAI;10/08/2023;Premium
+E098;Ã‰mile Morin de la Huet;émile.huet@company.com;Finance;Non;Analyste Financier;E005;17/09/2018;25.0;5.0;5.0;7.0;10.0;3.0;8.0;115000.0;VRAI;22/02/2023;Standard
+E099;Pauline Gilles;pauline.gilles@company.com;Recherche;Non;Analyste algorithmique;E007;18/02/2021;30.0;16.0;5.0;10.0;12.0;2.0;7.0;62000.0;VRAI;15/04/2023;ExÃ©cutif
+E100;Laetitia Leblanc;laetitia.leblanc@company.com;Finance;Non;Analyste Financier;E015;08/03/2019;28.0;12.0;4.0;10.0;10.0;3.0;9.0;80000.0;VRAI;22/02/2023;Standard
+E102;Susanne du Vincent;susanne.vincent@company.com;Recherche;Non;Spécialiste en intelligence artificielle appliquée;E010;05/11/2019;28.0;8.0;4.0;0.0;10.0;3.0;6.0;140000.0;VRAI;03/11/2023;Premium
+E103;Olivier-Bertrand Teixeira;olivier-bertrand.teixeira@company.com;IT;Non;Data Analyst;E010;15/07/2018;20.0;12.0;2.0;8.0;12.0;0.0;11.0;78000.0;VRAI;08/04/2023;ExÃ©cutif
+E104;Marcel de la Collin;marcel.collin@company.com;IT;Non;Administrateur Système;E005;03/11/2020;22.0;18.0;4.0;9.0;12.0;3.0;8.0;128000.0;VRAI;12/09/2023;Premium
+E106;Marianne Briand-Grégoire;marianne.briand-grégoire@company.com;Ventes;Non;Customer Success Manager;E010;18/02/2021;28.0;5.0;8.0;8.0;12.0;4.0;11.0;132000.0;VRAI;15/01/2024;Premium
+E107;Xavier-Ã‰ric Rodriguez;xavier-éric.rodriguez@company.com;Finance;Non;Analyste Financier;E010;03/11/2020;25.0;12.0;3.0;9.0;12.0;0.0;7.0;130000.0;VRAI;15/08/2023;Standard
+E108;Henriette Le Ferreira;henriette.ferreira@company.com;Ventes;Non;Sales Operations Manager;E014;12/08/2020;28.0;15.0;3.0;7.0;10.0;1.0;7.0;58000.0;VRAI;03/05/2023;ExÃ©cutif
+E109;Raymond Fischer du Boucher;raymond.boucher@company.com;Marketing;Non;Responsable marketing produit ;E017;15/01/2022;25.0;18.0;10.0;0.0;10.0;3.0;8.0;130000.0;VRAI;10/10/2023;Premium
+E110;Rémy-Lucas Chauvin;rémy-lucas.chauvin@company.com;Recherche;Non;Spécialiste en intelligence artificielle appliquée;E015;22/01/2019;28.0;16.0;8.0;8.0;10.0;3.0;8.0;62000.0;VRAI;21/04/2023;Standard
+E111;Luce Moreno-Brunel;luce.moreno-brunel@company.com;RH;Non;Assistant RH;E016;18/02/2021;25.0;15.0;10.0;9.0;15.0;2.0;9.0;65000.0;VRAI;21/04/2023;ExÃ©cutif
+E113;Ã‰tienne MarÃ©chal;étienne.maréchal@company.com;IT;Non;Spécialiste IA ;E010;18/02/2021;22.0;8.0;3.0;10.0;10.0;1.0;9.0;58000.0;VRAI;03/11/2023;ExÃ©cutif
+E114;Marianne-Joséphine Dijoux;marianne-joséphine.dijoux@company.com;Recherche;Non;Spécialiste en intelligence artificielle appliquée;E007;21/03/2022;28.0;12.0;4.0;10.0;12.0;1.0;8.0;120000.0;VRAI;15/08/2023;ExÃ©cutif
+E115;Alain Faivre-Payet;alain.faivre-payet@company.com;RH;Non;Assistant RH;E007;03/11/2020;28.0;12.0;5.0;8.0;10.0;0.0;8.0;128000.0;VRAI;01/07/2023;ExÃ©cutif
+E116;Thomas-Noël Le Roux;thomas-noël.roux@company.com;IT;Non;Chargé de conformité IT;E016;10/06/2018;25.0;10.0;5.0;9.0;12.0;0.0;9.0;95000.0;VRAI;17/10/2023;Standard
+E117;Claire Verdier;claire.verdier@company.com;Marketing;Non;Chargé de communication;E014;03/11/2020;22.0;18.0;5.0;9.0;10.0;3.0;9.0;62000.0;VRAI;05/12/2023;Premium
