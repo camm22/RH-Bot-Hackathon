@@ -39,6 +39,13 @@ AZURE_AI_THREAD_ID = "thread_FufuJu2292OEZPmj7ipUv7wG"
 # Or use AZURE_SUBSCRIPTION_ID for subscription-based auth
 
 
+CSRF_TRUSTED_ORIGINS = [
+    # Azure Web App hostname where your frontend lives:
+    "https://web-app-group4-h8aqhzgvcgbycte5.swedencentral-01.azurewebsites.net/",
+    # You can add more as needed, for example staging or other domains:
+    # "https://staging.example.com/",
+]
+
 # Application definition
 
 AUTH_USER_MODEL = 'users.CustomUser'
