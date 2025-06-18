@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-&6ncsr%h03h!^s=-blx(50n3h^0!__gw51jlks6614z1!6%#ye
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['web-app-group4-h8aqhzgvcgbycte5.swedencentral-01.azurewebsites.net']
 
 # Azure AI Configuration
 AZURE_AI_ENDPOINT = "https://hr-bot-hackathon-group4-resource.services.ai.azure.com/api/projects/hr-bot-hackathon-group4"
