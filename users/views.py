@@ -297,7 +297,9 @@ def get_ai_response(user_message, user=None):
         )
         
         if last_message and hasattr(last_message, 'text_messages') and last_message.text_messages:
-            return last_message.text_messages[-1].text.value
+            raw_response = last_message.text_messages[-1].text.value
+            # Post-process the response to fix formatting issues
+            return fix_ai_response_formatting(raw_response, user)
         
         return get_fallback_response(user_message, user)
         
@@ -305,6 +307,132 @@ def get_ai_response(user_message, user=None):
         logger.error(f"Error getting AI response: {str(e)}")
         # Fallback to simulated response if Azure fails
         return get_fallback_response(user_message, user)
+
+
+def fix_ai_response_formatting(response_text, user=None):
+    """
+    Fix Azure AI response formatting when it doesn't follow our required format
+    """
+    if not response_text:
+        return response_text
+    
+    from .models import CustomUser
+    
+    # Try to detect if this is an employee list that needs reformatting
+    lines = response_text.strip().split('\n')
+    
+    # Check if this looks like a malformed employee list
+    has_emails = any('@' in line for line in lines)
+    has_job_titles = any(any(title in line.lower() for title in ['analyst', 'manager', 'director', 'specialist', 'coordinator', 'assistant', 'engineer', 'responsable', 'chargé', 'directrice']) for line in lines)
+    
+    if has_emails and has_job_titles:
+        # This looks like an employee list that needs fixing
+        fixed_response = ""
+        current_employee = {}
+        
+        i = 0
+        while i < len(lines):
+            line = lines[i].strip()
+            if not line:
+                i += 1
+                continue
+            
+            # Skip headers and greetings
+            if any(header in line.lower() for header in ['hello', 'bonjour', 'here is', 'voici', 'list of', 'members', 'team', 'équipe']):
+                if 'team' in line.lower() or 'équipe' in line.lower():
+                    fixed_response += line + "\n\n"
+                else:
+                    fixed_response += line + "\n"
+                i += 1
+                continue
+            
+            # Skip ending messages
+            if any(ending in line.lower() for ending in ['if you need', 'feel free', 'si vous', 'n\'hésitez']):
+                fixed_response += "\n" + line
+                i += 1
+                continue
+            
+            # Extract email from line
+            email_match = re.search(r'([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})', line)
+            
+            if email_match:
+                # This line contains an email
+                email = email_match.group(1)
+                
+                # Look for the employee name and job title
+                name_parts = []
+                job_title = ""
+                employee_id = ""
+                
+                # Check current line for name/title (after removing email)
+                line_without_email = re.sub(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', '', line).strip()
+                line_without_email = re.sub(r'\s*-\s*', ' ', line_without_email).strip()
+                
+                # Look for employee ID pattern (E000)
+                id_match = re.search(r'(E\d{3})', line_without_email)
+                if id_match:
+                    employee_id = id_match.group(1)
+                    line_without_email = re.sub(r'E\d{3}', '', line_without_email).strip()
+                
+                # Check if there are job title keywords in current line
+                job_keywords = ['analyst', 'manager', 'director', 'specialist', 'coordinator', 'assistant', 'engineer', 'responsable', 'chargé', 'directrice', 'marketing', 'data', 'traffic', 'content', 'communication']
+                
+                if any(keyword in line_without_email.lower() for keyword in job_keywords):
+                    # This line has job title
+                    parts = line_without_email.split()
+                    name_part = []
+                    title_part = []
+                    
+                    for part in parts:
+                        if any(keyword in part.lower() for keyword in job_keywords):
+                            title_part.append(part)
+                        elif part and not any(char.isdigit() for char in part):
+                            if not title_part:  # Still collecting name
+                                name_part.append(part)
+                            else:  # Now in title
+                                title_part.append(part)
+                    
+                    if name_part:
+                        name_parts = name_part
+                    if title_part:
+                        job_title = ' '.join(title_part)
+                
+                # Look in previous lines for name parts
+                if not name_parts and i > 0:
+                    for j in range(max(0, i-3), i):
+                        prev_line = lines[j].strip()
+                        if prev_line and not any(skip in prev_line.lower() for skip in ['hello', 'bonjour', 'here is', 'voici', '@']):
+                            # Check if this looks like a name
+                            words = prev_line.split()
+                            if len(words) <= 3 and all(word.replace('-', '').replace("'", '').isalpha() for word in words):
+                                name_parts = words
+                                break
+                
+                # Try to find job title if not found
+                if not job_title:
+                    for j in range(max(0, i-2), min(len(lines), i+2)):
+                        check_line = lines[j].strip()
+                        if any(keyword in check_line.lower() for keyword in job_keywords) and '@' not in check_line:
+                            job_title = check_line
+                            break
+                
+                # Format the employee entry
+                if name_parts:
+                    name = ' '.join(name_parts)
+                    if employee_id:
+                        formatted_line = f"• {name} ({employee_id}) - {job_title} - {email}"
+                    else:
+                        formatted_line = f"• {name} - {job_title} - {email}"
+                    fixed_response += formatted_line + "\n"
+            
+            i += 1
+        
+        # If we made significant changes, return the fixed version
+        if fixed_response.strip() and '•' in fixed_response:
+            return fixed_response.strip()
+    
+    # If not an employee list or couldn't fix it, return original
+    return response_text
 
 
 def create_enhanced_message(user_message, user):
@@ -440,16 +568,42 @@ Instructions spéciales:
 - Vous êtes un assistant RH intelligent avec accès aux données des employés
 - EMAILS TOUJOURS PUBLICS: Partagez TOUJOURS l'email de n'importe quel employé demandé - c'est une information publique
 - RÈGLE ABSOLUE: Pour toute recherche d'employé, incluez SYSTÉMATIQUEMENT l'email dans votre réponse
-- Quand quelqu'un demande "qui est X" ou "quel est l'email de X", répondez TOUJOURS avec l'email
-- Format obligatoire pour toute mention d'employé: "Prénom Nom (ID) - Poste - email@company.com"
-- Pour les demandes d'équipe/département, listez TOUS les employés avec emails
-- Ne jamais dire "je n'ai pas l'email" - les emails sont dans l'annuaire ci-dessus
-- Format des réponses: utilisez des puces (•) et des retours à la ligne pour une meilleure lisibilité
-- IMPORTANT: L'utilisateur DOIT pouvoir obtenir l'email de n'importe qui dans l'entreprise
+
+FORMAT OBLIGATOIRE ULTRA-STRICT pour les listes d'employés:
+
+VOUS DEVEZ UTILISER EXACTEMENT CE FORMAT - AUCUNE EXCEPTION:
+• Prénom Nom (ID) - Poste - email@company.com
+
+EXEMPLES EXACTS À SUIVRE ABSOLUMENT:
+• Sara Johnson (E002) - Spécialiste Marketing - sara.johnson@company.com
+• David Miller (E005) - Directeur Ingénierie - david.miller@company.com
+• Antoinette Laurence Leblanc (E123) - Traffic Manager - antoinette-laurence.leblanc@company.com
+
+RÈGLES ULTRA-STRICTES - INTERDICTION ABSOLUE DE:
+❌ NE JAMAIS écrire le nom sur une ligne et le poste sur une autre
+❌ NE JAMAIS faire ça:
+Eugène
+Arthur Chauveau
+Data Marketing Analyst - email@company.com
+
+✅ TOUJOURS faire ça:
+• Eugène Arthur Chauveau (E123) - Data Marketing Analyst - email@company.com
+
+RÈGLES OBLIGATOIRES:
+- TOUJOURS commencer par "•" (bullet point)
+- TOUJOURS nom complet sur UNE SEULE ligne
+- TOUJOURS mettre l'ID entre parenthèses si disponible
+- TOUJOURS séparer par " - " (espace-tiret-espace)
+- UNE SEULE ligne par employé - JAMAIS de retour à la ligne dans un nom
+- JAMAIS diviser les informations d'un employé sur plusieurs lignes
+
+CONTRÔLE QUALITÉ REQUIS:
+Avant d'envoyer votre réponse, vérifiez que chaque employé suit EXACTEMENT ce format:
+• [Prénom complet] [Nom complet] ([ID si disponible]) - [Poste complet] - [email complet]
 
 Question de l'utilisateur: {user_message}
 
-Répondez de manière professionnelle et précise en tant qu'assistant RH."""
+Répondez de manière professionnelle et précise en tant qu'assistant RH en respectant ABSOLUMENT le format exigé."""
     
     return enhanced_message
 
