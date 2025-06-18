@@ -44,6 +44,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://web-app-group4-h8aqhzgvcgbycte5.swedencentral-01.azurewebsites.net/",
     # You can add more as needed, for example staging or other domains:
     # "https://staging.example.com/",
+    'https://*.azurewebsites.net',
 ]
 
 # Application definition
