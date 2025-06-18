@@ -23,9 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-&6ncsr%h03h!^s=-blx(50n3h^0!__gw51jlks6614z1!6%#ye'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['.azurewebsites.net', 'web-app-group4-h8aqhzgvcgbycte5.swedencentral-01.azurewebsites.net', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = [
+    '.azurewebsites.net', 
+    'web-app-group4-h8aqhzgvcgbycte5.swedencentral-01.azurewebsites.net', 
+    '127.0.0.1', 
+    'localhost'
+]
 
 # Azure AI Configuration
 AZURE_AI_ENDPOINT = "https://hr-bot-hackathon-group4-resource.services.ai.azure.com/api/projects/hr-bot-hackathon-group4"
@@ -145,6 +150,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Additional static files directories
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
