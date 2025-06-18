@@ -32,11 +32,16 @@ AZURE_AI_ENDPOINT = "https://hr-bot-hackathon-group4-resource.services.ai.azure.
 AZURE_AI_AGENT_ID = "asst_La9CRXiwP6eeKtSrficBdoFv"
 AZURE_AI_THREAD_ID = "thread_FufuJu2292OEZPmj7ipUv7wG"
 
-# Azure Authentication (set these environment variables)
-# AZURE_CLIENT_ID = "your-client-id"
-# AZURE_CLIENT_SECRET = "your-client-secret"  
-# AZURE_TENANT_ID = "your-tenant-id"
-# Or use AZURE_SUBSCRIPTION_ID for subscription-based auth
+# Azure Authentication
+import os
+
+# Set Azure credentials from environment variables or defaults
+AZURE_CLIENT_ID = os.environ.get('AZURE_CLIENT_ID', '22b5f247-51cc-4b71-8c08-9a7deac47c5a')
+AZURE_TENANT_ID = os.environ.get('AZURE_TENANT_ID', '413600cf-bd4e-4c7c-8a61-69e73cddf731')
+
+# Ensure environment variables are set for Azure SDK
+os.environ.setdefault('AZURE_CLIENT_ID', AZURE_CLIENT_ID)
+os.environ.setdefault('AZURE_TENANT_ID', AZURE_TENANT_ID)
 
 
 # Application definition

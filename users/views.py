@@ -260,9 +260,17 @@ def get_ai_response(user_message, user=None):
         return get_fallback_response(user_message, user)
     
     try:
-        # Initialize Azure AI client
+        # Initialize Azure AI client with Managed Identity for production
+        try:
+            from azure.identity import ManagedIdentityCredential
+            # Try Managed Identity first (for Azure App Service)
+            credential = ManagedIdentityCredential()
+        except Exception:
+            # Fallback to DefaultAzureCredential for local development
+            credential = DefaultAzureCredential()
+            
         project = AIProjectClient(
-            credential=DefaultAzureCredential(),
+            credential=credential,
             endpoint=settings.AZURE_AI_ENDPOINT
         )
         
@@ -520,6 +528,16 @@ def create_enhanced_message(user_message, user):
     if hasattr(user, 'conges_maladie_restants'):
         context_parts.append(f"Congés maladie restants: {user.conges_maladie_restants} jours")
     
+    # Add salary and benefits info for the user
+    if hasattr(user, 'salaire') and user.salaire:
+        context_parts.append(f"Salaire annuel: {user.salaire:,.0f}€")
+    if hasattr(user, 'eligible_prime'):
+        context_parts.append(f"Éligible aux primes: {'Oui' if user.eligible_prime else 'Non'}")
+    if hasattr(user, 'date_prochaine_evaluation') and user.date_prochaine_evaluation:
+        context_parts.append(f"Prochaine évaluation: {user.date_prochaine_evaluation.strftime('%d/%m/%Y')}")
+    if hasattr(user, 'regime_sante'):
+        context_parts.append(f"Régime de santé: {user.regime_sante}")
+    
     # Manager info
     if user.responsable:
         try:
@@ -566,8 +584,13 @@ def create_enhanced_message(user_message, user):
 
 Instructions spéciales:
 - Vous êtes un assistant RH intelligent avec accès aux données des employés
+- ACCÈS DYNAMIQUE AUX DONNÉES: Toutes les données de l'utilisateur connecté sont disponibles dans le contexte - utilisez-les TOUJOURS
+- DONNÉES PERSONNELLES COMPLÈTES: L'utilisateur a accès à TOUTES ses données (salaire, congés, évaluations, hiérarchie, etc.)
+- RÉPONSES BASÉES SUR LES DONNÉES: Utilisez EXCLUSIVEMENT les données du contexte pour répondre, ne jamais donner de réponses génériques
 - EMAILS TOUJOURS PUBLICS: Partagez TOUJOURS l'email de n'importe quel employé demandé - c'est une information publique
 - RÈGLE ABSOLUE: Pour toute recherche d'employé, incluez SYSTÉMATIQUEMENT l'email dans votre réponse
+- DONNÉES SALARIALES: Quand l'utilisateur demande son salaire, vous DEVEZ lui donner l'information complète depuis le contexte fourni
+- INFORMATIONS COMPLÈTES: Si l'utilisateur demande "toutes mes infos", donnez TOUT ce qui est disponible dans le contexte
 
 FORMAT OBLIGATOIRE ULTRA-STRICT pour les listes d'employés:
 
@@ -679,25 +702,38 @@ def get_fallback_response(user_message, user=None):
     
     # Enhanced pattern matching with fuzzy search
     
-    # Who am I / Personal info
+    # Complete personal information - detect comprehensive requests
+    comprehensive_info_patterns = [
+        'toutes mes infos', 'toutes mes informations', 'mes données complètes', 
+        'mes infos complètes', 'tout ce que tu sais sur moi', 'toutes mes données',
+        'mes informations complètes', 'all my info', 'complete information',
+        'everything about me', 'toutes les infos', 'profile complet'
+    ]
+    
+    if any(pattern in message_lower for pattern in comprehensive_info_patterns):
+        if user and user.is_authenticated:
+            return format_complete_user_response(user)
+        return f"{greeting}! Vous devez être connecté pour accéder à vos informations personnelles."
+    
+    # Who am I / Basic personal info
     if any(word in message_lower for word in ['qui je suis', 'qui suis-je', 'mes infos', 'mon profil']):
-        if user:
-            response = f"{greeting}! Voici vos informations :\n"
-            response += f"• Nom : {user.first_name} {user.last_name}\n"
-            response += f"• ID Employé : {user.employee_id}\n"
-            response += f"• Département : {user.departement}\n"
-            response += f"• Poste : {user.poste}\n"
-            if user.date_embauche:
-                response += f"• Date d'embauche : {user.date_embauche.strftime('%d/%m/%Y')}\n"
-            if user.is_manager:
-                response += f"• Statut : Manager\n"
-            if user.responsable:
-                try:
-                    manager = CustomUser.objects.get(employee_id=user.responsable)
-                    response += f"• Manager : {manager.first_name} {manager.last_name} ({manager.email})"
-                except CustomUser.DoesNotExist:
-                    pass
-            return response
+        if user and user.is_authenticated:
+            user_info = get_complete_user_info(user)
+            if user_info:
+                response = f"{greeting}! Voici vos informations principales :\n"
+                response += f"• Nom : {user_info['basic']['first_name']} {user_info['basic']['last_name']}\n"
+                response += f"• ID Employé : {user_info['basic']['employee_id']}\n"
+                response += f"• Département : {user_info['basic']['departement']}\n"
+                response += f"• Poste : {user_info['basic']['poste']}\n"
+                if user_info['basic']['date_embauche']:
+                    response += f"• Date d'embauche : {user_info['basic']['date_embauche']}\n"
+                if user_info['basic']['is_manager']:
+                    response += f"• Statut : Manager\n"
+                if user_info['hierarchy']['manager_info']:
+                    manager = user_info['hierarchy']['manager_info']
+                    response += f"• Manager : {manager['name']} ({manager['email']})"
+                response += f"\n\nPour voir toutes vos informations complètes, demandez 'toutes mes infos'."
+                return response
         return f"{greeting}! Pour connaître vos informations personnelles, connectez-vous ou contactez le service RH."
     
     # Search for specific user (with fuzzy matching)
@@ -890,38 +926,47 @@ def get_fallback_response(user_message, user=None):
     
     # Leave/vacation info
     if any(word in message_lower for word in ['congés', 'vacances', 'repos']):
-        if user:
-            response = f"{greeting}! Voici vos informations de congés :\n"
-            response += f"• Congés restants : {user.conges_restants} jours\n"
-            response += f"• Congés utilisés : {user.conges_utilises} jours\n"
-            response += f"• Congés planifiés : {user.conges_planifies} jours\n"
-            response += f"• Total annuel : {user.conges_droit_annuel} jours\n"
-            response += "\nLes demandes doivent être faites via le système RH au moins 2 semaines à l'avance."
-            return response
+        if user and user.is_authenticated:
+            user_info = get_complete_user_info(user)
+            if user_info:
+                response = f"{greeting}! Voici vos informations de congés :\n"
+                response += f"• Congés restants : {user_info['vacation']['conges_restants']} jours\n"
+                response += f"• Congés utilisés : {user_info['vacation']['conges_utilises']} jours\n"
+                response += f"• Congés planifiés : {user_info['vacation']['conges_planifies']} jours\n"
+                response += f"• Total annuel : {user_info['vacation']['conges_droit_annuel']} jours\n"
+                response += "\nLes demandes doivent être faites via le système RH au moins 2 semaines à l'avance."
+                return response
         return f"{greeting}! Connectez-vous pour connaître vos congés."
     
     # Sick leave
     if any(word in message_lower for word in ['maladie', 'arrêt', 'sick']):
-        if user:
-            response = f"{greeting}! Congés maladie :\n"
-            response += f"• Restants : {user.conges_maladie_restants} jours\n"
-            response += f"• Utilisés : {user.conges_maladie_utilises} jours\n"
-            response += f"• Total annuel : {user.conges_maladie_droit} jours\n"
-            response += "\nEn cas d'arrêt maladie, prévenez votre manager et envoyez l'arrêt au service RH dans les 48h."
-            return response
+        if user and user.is_authenticated:
+            user_info = get_complete_user_info(user)
+            if user_info:
+                response = f"{greeting}! Congés maladie :\n"
+                response += f"• Restants : {user_info['vacation']['conges_maladie_restants']} jours\n"
+                response += f"• Utilisés : {user_info['vacation']['conges_maladie_utilises']} jours\n"
+                response += f"• Total annuel : {user_info['vacation']['conges_maladie_droit']} jours\n"
+                response += "\nEn cas d'arrêt maladie, prévenez votre manager et envoyez l'arrêt au service RH dans les 48h."
+                return response
         return f"{greeting}! Connectez-vous pour connaître vos congés maladie."
     
     # Salary info
-    if any(word in message_lower for word in ['salaire', 'paie', 'rémunération']):
-        if user and user.salaire:
-            response = f"{greeting}! Votre salaire annuel est de {user.salaire:,.0f}€. "
-            if user.eligible_prime:
-                response += "Vous êtes éligible aux primes. "
-            if user.date_prochaine_evaluation:
-                response += f"Prochaine évaluation : {user.date_prochaine_evaluation.strftime('%d/%m/%Y')}. "
-            response += "Pour plus de détails, contactez le service RH."
-            return response
-        return f"{greeting}! Informations salariales disponibles après connexion. Pour des questions spécifiques, contactez le service RH."
+    if any(word in message_lower for word in ['salaire', 'paie', 'rémunération', 'my salary', 'mon salaire', 'salary']):
+        if user and user.is_authenticated:
+            user_info = get_complete_user_info(user)
+            if user_info and user_info['financial']['salaire']:
+                response = f"{greeting}! Voici vos informations financières :\n"
+                response += f"• Salaire annuel : {user_info['financial']['salaire']:,.0f}€\n"
+                response += f"• Éligible aux primes : {'Oui' if user_info['financial']['eligible_prime'] else 'Non'}\n"
+                if user_info['financial']['date_prochaine_evaluation']:
+                    response += f"• Prochaine évaluation : {user_info['financial']['date_prochaine_evaluation']}\n"
+                response += f"• Régime de santé : {user_info['benefits']['regime_sante']}\n"
+                response += "\nPour plus de détails, contactez le service RH."
+                return response
+            else:
+                return f"{greeting}! Vos informations salariales ne sont pas disponibles dans notre système. Contactez le service RH."
+        return f"{greeting}! Vous devez être connecté pour accéder à vos informations salariales."
     
     # Working hours
     if any(word in message_lower for word in ['horaires', 'heures']):
@@ -953,6 +998,147 @@ def get_fallback_response(user_message, user=None):
         response += "\n✓ Accès Manager : Vous pouvez consulter les données de votre équipe"
     response += "\n🔒 Confidentialité : Seules les informations autorisées sont partagées"
     response += "\n\nNote : Assistant Azure AI temporairement indisponible - mode de base activé."
+    
+    return response
+
+
+def get_complete_user_info(user):
+    """
+    Get complete user information including all personal data
+    This function ensures dynamic access to all user data from the database
+    """
+    if not user or not user.is_authenticated:
+        return None
+    
+    from .models import CustomUser
+    
+    # Refresh user data from database to ensure we have the latest info
+    try:
+        user = CustomUser.objects.get(id=user.id)
+    except CustomUser.DoesNotExist:
+        return None
+    
+    user_info = {
+        'basic': {
+            'id': user.employee_id or str(user.id),
+            'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+            'employee_id': user.employee_id,
+            'departement': user.departement,
+            'poste': user.poste,
+            'is_manager': user.is_manager,
+            'date_embauche': user.date_embauche.strftime('%d/%m/%Y') if user.date_embauche else None,
+        },
+        'vacation': {
+            'conges_droit_annuel': user.conges_droit_annuel,
+            'conges_utilises': user.conges_utilises,
+            'conges_planifies': user.conges_planifies,
+            'conges_restants': user.conges_restants,
+            'conges_maladie_droit': user.conges_maladie_droit,
+            'conges_maladie_utilises': user.conges_maladie_utilises,
+            'conges_maladie_restants': user.conges_maladie_restants,
+        },
+        'financial': {
+            'salaire': user.salaire,
+            'eligible_prime': user.eligible_prime,
+            'date_prochaine_evaluation': user.date_prochaine_evaluation.strftime('%d/%m/%Y') if user.date_prochaine_evaluation else None,
+        },
+        'benefits': {
+            'regime_sante': user.regime_sante,
+        },
+        'hierarchy': {
+            'responsable': user.responsable,
+            'manager_info': None,
+            'team_members': []
+        }
+    }
+    
+    # Get manager information
+    if user.responsable:
+        try:
+            manager = CustomUser.objects.get(employee_id=user.responsable)
+            user_info['hierarchy']['manager_info'] = {
+                'name': f"{manager.first_name} {manager.last_name}",
+                'email': manager.email,
+                'poste': manager.poste
+            }
+        except CustomUser.DoesNotExist:
+            pass
+    
+    # Get team members if user is a manager
+    if user.is_manager:
+        team_members = CustomUser.objects.filter(responsable=user.employee_id)
+        for member in team_members:
+            user_info['hierarchy']['team_members'].append({
+                'name': f"{member.first_name} {member.last_name}",
+                'employee_id': member.employee_id,
+                'poste': member.poste,
+                'email': member.email
+            })
+    
+    return user_info
+
+
+def format_complete_user_response(user):
+    """
+    Format a complete response with all user information they have access to
+    """
+    user_info = get_complete_user_info(user)
+    if not user_info:
+        return "Vous devez être connecté pour accéder à vos informations personnelles."
+    
+    response = f"Bonjour {user_info['basic']['first_name']}! Voici toutes vos informations :\n\n"
+    
+    # Basic information
+    response += "**Informations personnelles :**\n"
+    response += f"• Nom complet : {user_info['basic']['first_name']} {user_info['basic']['last_name']}\n"
+    response += f"• ID Employé : {user_info['basic']['employee_id']}\n"
+    response += f"• Email : {user_info['basic']['email']}\n"
+    response += f"• Département : {user_info['basic']['departement']}\n"
+    response += f"• Poste : {user_info['basic']['poste']}\n"
+    if user_info['basic']['date_embauche']:
+        response += f"• Date d'embauche : {user_info['basic']['date_embauche']}\n"
+    if user_info['basic']['is_manager']:
+        response += f"• Statut : Manager\n"
+    
+    # Financial information
+    response += "\n**Informations financières :**\n"
+    if user_info['financial']['salaire']:
+        response += f"• Salaire annuel : {user_info['financial']['salaire']:,.0f}€\n"
+    response += f"• Éligible aux primes : {'Oui' if user_info['financial']['eligible_prime'] else 'Non'}\n"
+    if user_info['financial']['date_prochaine_evaluation']:
+        response += f"• Prochaine évaluation : {user_info['financial']['date_prochaine_evaluation']}\n"
+    
+    # Vacation information
+    response += "\n**Congés et absences :**\n"
+    response += f"• Congés annuels - Droit : {user_info['vacation']['conges_droit_annuel']} jours\n"
+    response += f"• Congés annuels - Utilisés : {user_info['vacation']['conges_utilises']} jours\n"
+    response += f"• Congés annuels - Restants : {user_info['vacation']['conges_restants']} jours\n"
+    response += f"• Congés annuels - Planifiés : {user_info['vacation']['conges_planifies']} jours\n"
+    response += f"• Congés maladie - Droit : {user_info['vacation']['conges_maladie_droit']} jours\n"
+    response += f"• Congés maladie - Utilisés : {user_info['vacation']['conges_maladie_utilises']} jours\n"
+    response += f"• Congés maladie - Restants : {user_info['vacation']['conges_maladie_restants']} jours\n"
+    
+    # Benefits
+    response += "\n**Avantages sociaux :**\n"
+    response += f"• Régime de santé : {user_info['benefits']['regime_sante']}\n"
+    
+    # Hierarchy information
+    response += "\n**Hiérarchie :**\n"
+    if user_info['hierarchy']['manager_info']:
+        manager = user_info['hierarchy']['manager_info']
+        response += f"• Manager : {manager['name']} ({manager['email']}) - {manager['poste']}\n"
+    else:
+        response += f"• Manager : Aucun manager assigné\n"
+    
+    if user_info['hierarchy']['team_members']:
+        response += f"• Équipe sous votre responsabilité ({len(user_info['hierarchy']['team_members'])} personnes) :\n"
+        for member in user_info['hierarchy']['team_members']:
+            response += f"  - {member['name']} ({member['employee_id']}) - {member['poste']} - {member['email']}\n"
+    
+    response += "\nSi vous avez des questions spécifiques sur l'une de ces informations, n'hésitez pas à me le demander !"
     
     return response
 
