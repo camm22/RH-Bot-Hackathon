@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-&6ncsr%h03h!^s=-blx(50n3h^0!__gw51jlks6614z1!6%#ye
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.azurewebsites.net', 'web-app-group4-h8aqhzgvcgbycte5.swedencentral-01.azurewebsites.net']
+ALLOWED_HOSTS = ['.azurewebsites.net', 'web-app-group4-h8aqhzgvcgbycte5.swedencentral-01.azurewebsites.net', '127.0.0.1', 'localhost']
 
 # Azure AI Configuration
 AZURE_AI_ENDPOINT = "https://hr-bot-hackathon-group4-resource.services.ai.azure.com/api/projects/hr-bot-hackathon-group4"
@@ -39,13 +39,14 @@ AZURE_AI_THREAD_ID = "thread_FufuJu2292OEZPmj7ipUv7wG"
 # Or use AZURE_SUBSCRIPTION_ID for subscription-based auth
 
 
-CSRF_TRUSTED_ORIGINS = [
-    # Azure Web App hostname where your frontend lives:
-    "https://web-app-group4-h8aqhzgvcgbycte5.swedencentral-01.azurewebsites.net/",
-    # You can add more as needed, for example staging or other domains:
-    # "https://staging.example.com/",
-    'https://*.azurewebsites.net',
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     # Azure Web App hostname where your frontend lives:
+#     "https://web-app-group4-h8aqhzgvcgbycte5.swedencentral-01.azurewebsites.net/",
+#     # You can add more as needed, for example staging or other domains:
+#     # "https://staging.example.com/",
+#     'https://*.azurewebsites.net',
+#     'https://*.azurewebsites.net/*'
+# ]
 
 # Application definition
 
@@ -66,7 +67,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
