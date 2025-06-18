@@ -24,6 +24,59 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
+def generate_chat_title(user_message):
+    """
+    Generate a simple, well-written and short title from the user message
+    """
+    # Simple AI-like title generation using keywords and patterns
+    message_lower = user_message.lower().strip()
+    
+    # Define title patterns based on common HR queries
+    title_patterns = {
+        # Team/Department queries
+        ('équipe', 'dans', 'département', 'filliale', 'service'): 'Équipe & Organisation',
+        ('qui dans', 'qui est dans', 'membre'): 'Recherche Équipe',
+        
+        # Personal info
+        ('qui je suis', 'mes infos', 'mon profil', 'mes données'): 'Mon Profil',
+        
+        # Leave/vacation
+        ('congés', 'vacances', 'repos', 'arrêt'): 'Congés & Absences',
+        
+        # Contact/directory
+        ('contact', 'email', 'mail', 'téléphone', 'adresse'): 'Contacts',
+        ('qui est', 'infos sur', 'recherche'): 'Annuaire',
+        
+        # HR policies
+        ('politique', 'règlement', 'procédure'): 'Politiques RH',
+        ('salaire', 'paie', 'rémunération'): 'Rémunération',
+        
+        # Management
+        ('manager', 'responsable', 'chef', 'hiérarchie'): 'Management',
+        ('statistiques', 'stats', 'nombre', 'combien'): 'Statistiques',
+        
+        # Training/development
+        ('formation', 'training', 'développement'): 'Formation',
+        
+        # General help
+        ('aide', 'help', 'comment', 'que faire'): 'Assistance',
+    }
+    
+    # Check patterns and return appropriate title
+    for keywords, title in title_patterns.items():
+        if any(keyword in message_lower for keyword in keywords):
+            return title
+    
+    # Fallback: extract main subject or use generic title
+    words = user_message.strip().split()
+    if len(words) <= 3:
+        return user_message.strip()
+    elif len(words) <= 6:
+        return ' '.join(words[:4])
+    else:
+        return ' '.join(words[:3]) + '...'
+
+
 def home_view(request):
     return render(request, 'users/home.html', {'show_navbar': False})
 
@@ -158,7 +211,8 @@ def send_message(request, chat_id):
         
         # Update chat title if it's the first message
         if chat.messages.count() == 1:
-            chat.title = user_message[:30] + ('...' if len(user_message) > 30 else '')
+            # Generate a simple, well-written title using AI
+            chat.title = generate_chat_title(user_message)
             chat.save()
         
         # Get AI response from Azure with user context

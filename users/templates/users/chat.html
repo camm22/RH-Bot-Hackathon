@@ -45,8 +45,8 @@
                         <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button 
                                 @click.stop="deleteChat(chat.id)"
-                                class="p-1 hover:bg-destructive/10 rounded text-destructive"
-                                title="Delete chat"
+                                class="p-1 hover:bg-destructive/10 rounded text-destructive transition-colors"
+                                title="Supprimer le chat"
                                 :disabled="loading"
                             >
                                 <i data-lucide="trash-2" class="h-3 w-3"></i>
@@ -152,10 +152,7 @@
             <template x-for="message in getCurrentMessages()" :key="message.id">
                 <div :class="{ 'justify-end': message.sender === 'user', 'justify-start': message.sender === 'ai' }" class="flex">
                     <div :class="{ 'bg-primary text-primary-foreground': message.sender === 'user', 'bg-muted': message.sender === 'ai' }" class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
-                        <div class="flex items-start space-x-2" x-show="message.sender === 'ai'">
-                            <div class="h-6 w-6 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <i data-lucide="bot" class="h-3 w-3 text-primary"></i>
-                            </div>
+                        <div class="flex items-start" x-show="message.sender === 'ai'">
                             <div class="text-sm whitespace-pre-line prose prose-sm max-w-none" x-html="formatMessage(message.text)"></div>
                         </div>
                         <div x-show="message.sender === 'user'" class="text-sm whitespace-pre-line" x-text="message.text"></div>
@@ -337,8 +334,25 @@ function chatApp() {
             if (!this.newMessage.trim() || this.isTyping || !this.currentChatId) return;
             
             const message = this.newMessage.trim();
+            const timestamp = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            
+            // Create temporary user message and display it immediately
+            const tempUserMessage = {
+                id: `temp-${Date.now()}`,
+                sender: 'user',
+                text: message,
+                timestamp: timestamp
+            };
+            
+            // Add user message immediately to UI
+            this.currentMessages.push(tempUserMessage);
             this.newMessage = '';
             this.isTyping = true;
+            
+            // Scroll to bottom to show user message
+            this.$nextTick(() => {
+                this.scrollToBottom();
+            });
             
             try {
                 const response = await fetch(`/api/chats/${this.currentChatId}/send/`, {
@@ -353,7 +367,8 @@ function chatApp() {
                 const data = await response.json();
                 
                 if (response.ok) {
-                    // Add both messages to the current chat
+                    // Remove temporary message and add real messages
+                    this.currentMessages.pop(); // Remove temp user message
                     this.currentMessages.push(data.user_message);
                     this.currentMessages.push(data.ai_message);
                     
@@ -364,11 +379,11 @@ function chatApp() {
                             ? data.ai_message.text.substring(0, 50) + '...' 
                             : data.ai_message.text;
                         
-                        // Update title if it's the first message
+                        // Update title if it's the first message  
                         if (this.currentMessages.length === 2) {
-                            this.chats[chatIndex].title = message.length > 30 
-                                ? message.substring(0, 30) + '...' 
-                                : message;
+                            this.chats[chatIndex].title = data.user_message.text.length > 30 
+                                ? data.user_message.text.substring(0, 30) + '...' 
+                                : data.user_message.text;
                         }
                     }
                     
@@ -377,12 +392,16 @@ function chatApp() {
                         this.scrollToBottom();
                     });
                 } else {
+                    // Remove temp message and restore input on error
+                    this.currentMessages.pop();
+                    this.newMessage = message;
                     console.error('Error sending message:', data.error);
-                    this.newMessage = message; // Restore message on error
                 }
             } catch (error) {
+                // Remove temp message and restore input on error
+                this.currentMessages.pop();
+                this.newMessage = message;
                 console.error('Error sending message:', error);
-                this.newMessage = message; // Restore message on error
             } finally {
                 this.isTyping = false;
             }
