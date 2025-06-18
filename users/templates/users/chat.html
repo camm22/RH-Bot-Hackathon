@@ -45,11 +45,11 @@
                         <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button 
                                 @click.stop="deleteChat(chat.id)"
-                                class="p-1 hover:bg-destructive/10 rounded text-destructive transition-colors"
+                                class="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-md text-red-500 hover:text-red-600 transition-all duration-200 hover:scale-105"
                                 title="Supprimer le chat"
                                 :disabled="loading"
                             >
-                                <i data-lucide="trash-2" class="h-3 w-3"></i>
+                                <i data-lucide="trash-2" class="h-4 w-4"></i>
                             </button>
                         </div>
                     </div>

@@ -396,7 +396,7 @@ def create_enhanced_message(user_message, user):
     if user.responsable:
         try:
             manager = CustomUser.objects.get(employee_id=user.responsable)
-            context_parts.append(f"Manager: {manager.first_name} {manager.last_name}")
+            context_parts.append(f"Manager: {manager.first_name} {manager.last_name} - {manager.poste} - {manager.email}")
         except CustomUser.DoesNotExist:
             pass
     
@@ -438,14 +438,14 @@ def create_enhanced_message(user_message, user):
 
 Instructions spéciales:
 - Vous êtes un assistant RH intelligent avec accès aux données des employés
-- Les EMAILS sont PUBLICS et peuvent être partagés librement avec tous
-- Fournissez des réponses précises et documentées adaptées aux besoins RH
-- Pour les demandes d'équipe/département, listez TOUS les employés avec ce format sur des lignes séparées:
-  "• Prénom Nom (ID) - Poste - email@company.com"
-- Pour les managers, vous avez accès complet aux données de leur équipe  
-- Ne limitez jamais le nombre d'employés affichés, montrez la liste complète
+- EMAILS TOUJOURS PUBLICS: Partagez TOUJOURS l'email de n'importe quel employé demandé - c'est une information publique
+- RÈGLE ABSOLUE: Pour toute recherche d'employé, incluez SYSTÉMATIQUEMENT l'email dans votre réponse
+- Quand quelqu'un demande "qui est X" ou "quel est l'email de X", répondez TOUJOURS avec l'email
+- Format obligatoire pour toute mention d'employé: "Prénom Nom (ID) - Poste - email@company.com"
+- Pour les demandes d'équipe/département, listez TOUS les employés avec emails
+- Ne jamais dire "je n'ai pas l'email" - les emails sont dans l'annuaire ci-dessus
 - Format des réponses: utilisez des puces (•) et des retours à la ligne pour une meilleure lisibilité
-- Structurez vos réponses avec des espaces et des sauts de ligne pour une présentation claire
+- IMPORTANT: L'utilisateur DOIT pouvoir obtenir l'email de n'importe qui dans l'entreprise
 
 Question de l'utilisateur: {user_message}
 
@@ -540,7 +540,7 @@ def get_fallback_response(user_message, user=None):
             if user.responsable:
                 try:
                     manager = CustomUser.objects.get(employee_id=user.responsable)
-                    response += f"• Manager : {manager.first_name} {manager.last_name}"
+                    response += f"• Manager : {manager.first_name} {manager.last_name} ({manager.email})"
                 except CustomUser.DoesNotExist:
                     pass
             return response
@@ -552,7 +552,12 @@ def get_fallback_response(user_message, user=None):
         r'employé ([A-Z0-9]+)',
         r'infos? (?:sur|de) ([A-Za-z\s\-]+)',
         r'qui est ([A-Za-z\s\-]+)',
-        r'contact (?:de|pour) ([A-Za-z\s\-]+)'
+        r'contact (?:de|pour) ([A-Za-z\s\-]+)',
+        r'email (?:de|du) ([A-Za-z\s\-]+)',
+        r'mail (?:de|du) ([A-Za-z\s\-]+)',
+        r'adresse (?:de|du) ([A-Za-z\s\-]+)',
+        r'quel(?:le)? (?:est l\'?)?email (?:de|du) ([A-Za-z\s\-]+)',
+        r'quel(?:le)? (?:est l\'?)?mail (?:de|du) ([A-Za-z\s\-]+)'
     ]
     
     for pattern in user_search_patterns:
