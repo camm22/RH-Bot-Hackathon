@@ -16,9 +16,62 @@ class CustomUser(AbstractUser):
     )
     birth_date = models.DateField(null=True, blank=True)
     sex = models.CharField(max_length=6, choices=SEX_CHOICES, null=True, blank=True)
+    
+    # Nouveaux champs basés sur le CSV
+    employee_id = models.CharField(max_length=10, unique=True, null=True, blank=True)
+    
+    DEPARTMENT_CHOICES = (
+        ('IT', 'IT'),
+        ('Marketing', 'Marketing'),
+        ('Finance', 'Finance'),
+        ('RH', 'RH'),
+        ('Ventes', 'Ventes'),
+        ('Recherche', 'Recherche'),
+        ('Direction', 'Direction'),
+    )
+    departement = models.CharField(max_length=20, choices=DEPARTMENT_CHOICES, null=True, blank=True)
+    
+    is_manager = models.BooleanField(default=False)
+    poste = models.CharField(max_length=100, null=True, blank=True)
+    responsable = models.CharField(max_length=10, null=True, blank=True)  # ID du responsable
+    date_embauche = models.DateField(null=True, blank=True)
+    
+    # Congés
+    conges_droit_annuel = models.FloatField(default=25.0)
+    conges_utilises = models.FloatField(default=0.0)
+    conges_planifies = models.FloatField(default=0.0)
+    conges_restants = models.FloatField(default=25.0)
+    
+    # Congés maladie
+    conges_maladie_droit = models.FloatField(default=10.0)
+    conges_maladie_utilises = models.FloatField(default=0.0)
+    conges_maladie_restants = models.FloatField(default=10.0)
+    
+    # Rémunération
+    salaire = models.FloatField(null=True, blank=True)
+    eligible_prime = models.BooleanField(default=True)
+    date_prochaine_evaluation = models.DateField(null=True, blank=True)
+    
+    # Avantages
+    REGIME_SANTE_CHOICES = (
+        ('Standard', 'Standard'),
+        ('Premium', 'Premium'),
+        ('Exécutif', 'Exécutif'),
+    )
+    regime_sante = models.CharField(max_length=20, choices=REGIME_SANTE_CHOICES, default='Standard')
 
     def __str__(self):
-        return self.username
+        return f"{self.first_name} {self.last_name} ({self.employee_id or self.username})"
+
+    @property
+    def manager_name(self):
+        if self.responsable:
+            try:
+                manager = CustomUser.objects.get(employee_id=self.responsable)
+                return f"{manager.first_name} {manager.last_name}"
+            except CustomUser.DoesNotExist:
+                return "Manager non trouvé"
+        return "Aucun"
 
 
 class Chat(models.Model):
